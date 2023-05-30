@@ -1,0 +1,184 @@
+#!/bin/bash
+# encode_stream: encode VHS / Camera / Cassette Streams
+#
+# 2021-12-14 added mp3, m4a options
+
+set -eo pipefail
+shopt -s expand_aliases
+alias ffmpeg='ffmpeg -hide_banner'
+alias Reset="tput sgr0" # Reset text attributes to normal, not clearing screen
+
+DIR=""                  # dir that OUTPUT_NAME will sit in
+MP3=""                  # mp3 basename
+M4A=""                  # m4a basename
+MP4=""                  # mp4 basename
+TLS=""                  # 3-letter suffix
+
+HELP ()
+{
+cat << EOF
+
+usage: $0 OUTPUT_NAME [AUDIO_DEVICE] [VIDEO_DEVICE] [REGION] [PIX_FMT]
+
+Encodes input from a VHS / Camera / Cassette stream to a mp4 video.
+
+   OUTPUT_NAME     filename of mp4 video       (DEFAULT; no need for mp4 suffix                       )
+               or, filename of m4a sound file  (needs m4a suffix                                      )
+               or, filename of mp3 sound file  (needs mp3 suffix                                      )
+   VIDEO_DEVICE    eg 'dev/video0' (try "v4l2-ctl --all"                                              )
+   AUDIO_DEVICE    eg 'hw:2,0'     (try "arecord -l" or "arecord -L" or "cat /proc/asound/cards"      )
+   REGION          eg 'PAL'
+   PIX_FMT         eg 'yuv420p'    (v4l2 default is yuyv422, but that prevents display on some devices)
+
+Note:
+  Only use "q" to quit from the running process in the terminal
+
+EOF
+}
+
+CECHO ()                 # echo in magenta
+{
+black='\E[30;47m'
+red='\E[31;47m'
+green='\E[32;47m'
+yellow='\E[33;47m'
+blue='\E[34;47m'
+magenta='\E[35;40m'      # magenta foreground, white background
+cyan='\E[36;47m'
+white='\E[37;47m'
+
+echo -en "$magenta"
+echo -n "${1}"           # no newline
+Reset
+
+return
+} # CECHO ()
+
+# show HELP if no input OR first param is "-h" OR "-H"
+if [ -z "$1" ]; then
+  CECHO "!Fatal Error!"; echo " No OUTPUT_NAME in command."
+  HELP
+  exit 2
+else if [[ "$1" == "-h" || "$1" == "-H" ]]; then
+  HELP
+  exit
+else
+  OUTPUT_NAME="$1"
+fi fi
+
+# set $MP3, $M4A, $MP4, $TLS, $DIR
+MP4="${OUTPUT_NAME##*/}";  # parameter expansion to basename; see https://tldp.org/LDP/abs/html/refcards.html#AEN22828
+TLS="${MP4##*.}";
+DIR="${OUTPUT_NAME%/*}";   # parameter expansion to directory
+if [ "$MP4" = "$DIR" ]; then
+  # no path provided with mp4 filename
+  # try to provide it
+  DIR="$PWD"
+  if [ -z "$DIR" ]; then
+    CECHO "!Fatal Error!"; echo " The filename was provided without a directory-path, and \$PWD is empty";
+    echo -n "Please add the directory path to the OUTPUT_NAME and try again."
+  HELP
+  exit 2
+  fi
+fi
+if [ "$MP4" = "$TLS" ]; then
+  # no '.' in OUTPUT_NAME; we need it to choose m4a or mp3
+  # default is mp4
+  MP4="$DIR/$MP4.mp4"
+  TLS="mp4"
+fi
+if [ "$TLS" = "mp3" ]; then
+  # sound file only
+  MP3="$DIR/$MP4"
+  MP4=M4A=""
+else if [ "$TLS" = "m4a" ]; then
+  # sound file only
+  M4A="$DIR/$MP4"
+  MP4=MP3=""
+else
+  # default is mp4
+  MP4="$DIR/$MP4"
+  MP3=M4A=""
+fi fi
+
+# set default parameters
+if [ -z "$2" ]; then
+  AUDIO_DEVICE='hw:2,0'
+else
+  AUDIO_DEVICE="$2"
+fi
+if [ -z "$3" ]; then
+  VIDEO_DEVICE='/dev/video0'
+else
+  VIDEO_DEVICE="$3"
+fi
+if [ -z "$4" ]; then
+  REGION='PAL'
+else
+  REGION="$4"
+fi
+if [ -z "$5" ]; then
+  PIX_FMT='yuv420p'
+else
+  PIX_FMT="$5"
+fi
+
+# encode the stream
+# https://ffmpeg.org/ffmpeg-devices.html
+# this was tested using a EasyCAP UTV007 USB converter; see
+# https://blog.michael.franzl.name/2017/10/21/digitize-old-vhs-videos-easycap-utv007-usb-converter-linux/
+# (the methods using gstreamer in last link failed completely)
+# https://gordonlesti.com/digitize-a-vhs-tape-with-ffmpeg-and-easycap-on-linux/
+# (the methods in last link are used here)
+# install QT video4linux Test Utility: "sudo apt-get install qv4l2"
+# If the Test Utility can display the stream then this encoding can also perform
+# Default pixel format of V4l2 is "'YUYV' (YUYV 4:2:2)"; mp4 needs to be max: yuv420p to be read by Samsung Smart TVs, etc.
+# "-vsync 1" is 1=cfr; frames duplicated/dropped to get exactly the requested constant frame rate (thus must include -r)
+# show the above:
+# ffplay -hide_banner -f video4linux2 -list_formats all /dev/video0
+#
+# REMOVE SILENCE: to test whether you have the required filters,
+# in a terminal run:
+# ffmpeg -hide_banner -filters | grep silenceremove
+# something like the following is a +ve result:
+#  ... silenceremove     A->A       Remove silence.
+# then:
+# ffmpeg -i infile.mp3 -af silenceremove=start_periods=1:stop_periods=1:detection=peak outfile.mp3
+#
+# I could not get that filter to work!
+
+case "$TLS" in
+  mp3)
+  # create MP3 sound file (original audio output)
+  #-------------------------------------------------------------------------
+  ffmpeg -f alsa                   -thread_queue_size 512 -i "$AUDIO_DEVICE"                   \
+    -acodec libmp3lame -b:a 128k -channels 2 -ar 48000                                         \
+    "$MP3"
+  exit 0;
+  ;;
+  m4a)
+  # create M4A sound file (updated audio output; better compression)
+  #-------------------------------------------------------------------------
+  ffmpeg -f alsa                   -thread_queue_size 512 -i "$AUDIO_DEVICE"                   \
+    -acodec aac -b:a 128k -channels 2 -ar 48000                                                \
+    "$M4A"
+  exit 0;
+  ;;
+  mp4)
+  # create MP4 video file
+  #-------------------------------------------------------------------------
+  ffmpeg -f v4l2 -standard $REGION -thread_queue_size 512 -i "$VIDEO_DEVICE"                   \
+         -f alsa                   -thread_queue_size 512 -i "$AUDIO_DEVICE"                   \
+    -vcodec libx264 -preset superfast -crf 25 -s 720x576 -r 25 -aspect 4:3 -pix_fmt "$PIX_FMT" \
+    -acodec aac -b:a 128k -channels 2 -ar 48000                                                \
+    -vsync 1 "$MP4"
+  exit 0;
+  ;;
+esac
+exit 0
+
+# file-edits:
+# (see script file: remove_ads)
+
+# add chapters:
+# (see script file: add_chapters)
