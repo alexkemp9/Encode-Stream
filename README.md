@@ -13,7 +13,7 @@ $ la ~/.local/sbin/add_chapters
 -rwx------ 1 user user 5846 Dec 21  2021 /home/user/.local/sbin/encode_stream
 ```
 ## *Help*
-Attempting to run the bare script with zero parameters shows an extended Help message:
+Attempting to run the bare script with zero parameters shows a Help message:
 
 ```bash
 $ ~/.local/sbin/encode_stream
