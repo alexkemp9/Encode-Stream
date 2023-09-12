@@ -23,13 +23,13 @@ usage: /home/user/.local/sbin/encode_stream OUTPUT_NAME [AUDIO_DEVICE] [VIDEO_DE
 
 Encodes input from a VHS / Camera / Cassette stream to a mp4 video.
 
-   OUTPUT_NAME     filename of mp4 video       (DEFAULT; no need for .mp4 suffix                      )
-               or, filename of m4a sound file  (needs .m4a suffix                                     )
-               or, filename of mp3 sound file  (needs .mp3 suffix                                     )
-   VIDEO_DEVICE    eg 'dev/video0' (try "v4l2-ctl --all"                                              )
-   AUDIO_DEVICE    eg 'hw:2,0'     (try "arecord -l" or "arecord -L" or "cat /proc/asound/cards"      )
-   REGION          eg 'PAL'
-   PIX_FMT         eg 'yuv420p'    (v4l2 default is yuyv422, but that prevents display on some devices)
+   OUTPUT_NAME     filename of mp4 video       (DEFAULT; no need for mp4 suffix                   )
+               or, filename of m4a sound file  (needs m4a suffix                                  )
+               or, filename of mp3 sound file  (needs mp3 suffix                                  )
+   VIDEO_DEVICE    eg '/dev/video0' (try "v4l2-ctl --all"                                         )
+   AUDIO_DEVICE    eg 'hw:2,0'      (try "arecord -l" or "arecord -L" or "cat /proc/asound/cards" )
+   REGION          eg 'PAL'         (qv4l2 tool (QT v4l2 test utility) will help test for Region  )
+   PIX_FMT         eg 'yuv420p'     (v4l2 default is yuyv422; will prevent display on some devices)
 
 Note:
   Only use "q" to quit from the running process in the terminal
