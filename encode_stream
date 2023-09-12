@@ -22,13 +22,13 @@ usage: $0 OUTPUT_NAME [AUDIO_DEVICE] [VIDEO_DEVICE] [REGION] [PIX_FMT]
 
 Encodes input from a VHS / Camera / Cassette stream to a mp4 video.
 
-   OUTPUT_NAME     filename of mp4 video       (DEFAULT; no need for mp4 suffix                       )
-               or, filename of m4a sound file  (needs m4a suffix                                      )
-               or, filename of mp3 sound file  (needs mp3 suffix                                      )
-   VIDEO_DEVICE    eg 'dev/video0' (try "v4l2-ctl --all"                                              )
-   AUDIO_DEVICE    eg 'hw:2,0'     (try "arecord -l" or "arecord -L" or "cat /proc/asound/cards"      )
-   REGION          eg 'PAL'
-   PIX_FMT         eg 'yuv420p'    (v4l2 default is yuyv422, but that prevents display on some devices)
+   OUTPUT_NAME     filename of mp4 video       (DEFAULT; no need for mp4 suffix                   )
+               or, filename of m4a sound file  (needs m4a suffix                                  )
+               or, filename of mp3 sound file  (needs mp3 suffix                                  )
+   VIDEO_DEVICE    eg '/dev/video0' (try "v4l2-ctl --all"                                         )
+   AUDIO_DEVICE    eg 'hw:2,0'      (try "arecord -l" or "arecord -L" or "cat /proc/asound/cards" )
+   REGION          eg 'PAL'                                                                       )
+   PIX_FMT         eg 'yuv420p'     (v4l2 default is yuyv422; will prevent display on some devices)
 
 Note:
   Only use "q" to quit from the running process in the terminal
@@ -134,6 +134,7 @@ fi
 # If the Test Utility can display the stream then this encoding can also perform
 # Default pixel format of V4l2 is "'YUYV' (YUYV 4:2:2)"; mp4 needs to be max: yuv420p to be read by Samsung Smart TVs, etc.
 # "-vsync 1" is 1=cfr; frames duplicated/dropped to get exactly the requested constant frame rate (thus must include -r)
+# 2023-09-12: vsync is deprecated, so changed to '-fps_mode cfr'
 # show the above:
 # ffplay -hide_banner -f video4linux2 -list_formats all /dev/video0
 #
@@ -171,7 +172,7 @@ case "$TLS" in
          -f alsa                   -thread_queue_size 512 -i "$AUDIO_DEVICE"                   \
     -vcodec libx264 -preset superfast -crf 25 -s 720x576 -r 25 -aspect 4:3 -pix_fmt "$PIX_FMT" \
     -acodec aac -b:a 128k -channels 2 -ar 48000                                                \
-    -vsync 1 "$MP4"
+    -fps_mode cfr "$MP4"
   exit 0;
   ;;
 esac
