@@ -34,3 +34,11 @@ Encodes input from a VHS / Camera / Cassette stream to a mp4 video.
 Note:
   Only use "q" to quit from the running process in the terminal
 ```
+## *Final Check*
+Beware your user!
+
+Once you have discovered your Video + Audio device locations, then use `ls -l` to discover the user-permissions. It may be necessary to act-as-root with this script for it to be effective. Alternatively, if necessary you could:
+
+    `sudo chmod a+r /dev/video0`
+
+...to change the file-mode to allow your user permission to access the device(s).
