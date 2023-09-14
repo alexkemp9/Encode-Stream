@@ -36,11 +36,19 @@ Note:
   Only use "q" to quit from the running process in the terminal
 ```
 ## *Hardware*
-This may be the hardest part. I chose *EasyCAP UTV007* because others had reported that it was recognised by Linux & did the job.
+This may be the hardest part.    
+I chose *EasyCAP UTV007* because others had reported that it was recognised by Linux & did the job (which it did). If you have any problems at this stage I cannot help, but *can* report on what happens in the background.
+
+Plugging the USB2 lead into the desktop computer auto-creates video + audio devices via the interaction of V4L with the kernel:–
+```
+$ ls -l /dev/video*
+crw-rw----+ 1 root video 81, 0 Sep 12 08:34 /dev/video0
+crw-rw----+ 1 root video 81, 1 Sep 12 08:34 /dev/video1
+```
 
 ## *Software*
 You may need to install ffmpeg.    
-You may need to install Video for Linux (v4l-utils + qv4l2 as a minimum):
+You may need to install Video for Linux (`v4l-utils` + `qv4l2` as a minimum):
 ```bash
 $ apt search v4l
 Sorting... Done
