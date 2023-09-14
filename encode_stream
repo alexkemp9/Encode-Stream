@@ -27,7 +27,7 @@ Encodes input from a VHS / Camera / Cassette stream to a mp4 video.
                or, filename of mp3 sound file  (needs mp3 suffix                                  )
    VIDEO_DEVICE    eg '/dev/video0' (try "v4l2-ctl --all"                                         )
    AUDIO_DEVICE    eg 'hw:2,0'      (try "arecord -l" or "arecord -L" or "cat /proc/asound/cards" )
-   REGION          eg 'PAL'                                                                       )
+   REGION          eg 'PAL'         (qv4l2 tool (QT v4l2 test utility) will help test for Region  )
    PIX_FMT         eg 'yuv420p'     (v4l2 default is yuyv422; will prevent display on some devices)
 
 Note:
@@ -125,6 +125,7 @@ fi
 
 # encode the stream
 # https://ffmpeg.org/ffmpeg-devices.html
+# https://ffmpeg.org/ffmpeg-codecs.html
 # this was tested using a EasyCAP UTV007 USB converter; see
 # https://blog.michael.franzl.name/2017/10/21/digitize-old-vhs-videos-easycap-utv007-usb-converter-linux/
 # (the methods using gstreamer in last link failed completely)
@@ -135,6 +136,9 @@ fi
 # Default pixel format of V4l2 is "'YUYV' (YUYV 4:2:2)"; mp4 needs to be max: yuv420p to be read by Samsung Smart TVs, etc.
 # "-vsync 1" is 1=cfr; frames duplicated/dropped to get exactly the requested constant frame rate (thus must include -r)
 # 2023-09-12: vsync is deprecated, so changed to '-fps_mode cfr'
+#           : crf = constant (no bitrate set) / constrained (max bitrate set) rate factor
+#           : 0 to 63, lower is higher quality (values vary by codec)
+#
 # show the above:
 # ffplay -hide_banner -f video4linux2 -list_formats all /dev/video0
 #
