@@ -2,7 +2,8 @@
 A BASH Script to encode VHS / Camera / Cassette Streams
 
 ## *Basics*
-This script file is designed for use by any-user (no root access required) within a Terminal. It’s principal purpose is to make it easy & reliable to encode a stream from a VHS, Camera or Cassette player to a video file. It has been used extensively by myself to transfer all my VHS tapes (using a EasyCAP UTV007 USB converter) & cassettes (using a USB-powered cassette player) to disc under *Devuan* (a systemD-free version of *Debian*). In addition to BASH, the main utility required is FFMPEG. Note that zero efforts are made to test for the presence of FFMPEG before use.
+This script file is designed for use by any-user (no root access required) within a Terminal. It’s principal purpose is to make it easy & reliable to encode a stream from a VHS, Camera or Cassette player to a video file. It has been used extensively by myself to transfer all my VHS tapes (using a EasyCAP UTV007 USB converter - example below) & cassettes (using a USB-powered cassette player) to disc under *Devuan* (a systemD-free version of *Debian*). In addition to BASH, the main utility required is FFMPEG. Note that zero efforts are made to test for the presence of FFMPEG before use.
+![EasyCAP UTV007 USB](Images/easycap.png)
 
 ## *Begin*
 The following will assume that you have created a dir `~/.local/sbin` within which you store the bash-file; this is to set the script as executable for current user only:
@@ -34,6 +35,42 @@ Encodes input from a VHS / Camera / Cassette stream to a mp4 video.
 Note:
   Only use "q" to quit from the running process in the terminal
 ```
+## *Hardware*
+This may be the hardest part. I chose *EasyCAP UTV007* because others had reported that it was recognised by Linux & did the job.
+
+## *Software*
+You may need to install ffmpeg.    
+You may need to install Video for Linux (v4l-utils + qv4l2 as a minimum):
+```bash
+$ apt search v4l
+Sorting... Done
+Full Text Search... Done
+…
+dov4l/stable,now 0.9+repack-1+b1 amd64 [installed]
+  program to set and query settings of video4linux devices
+
+dv4l/stable,now 1.0-5+b2 amd64 [installed]
+  Redirect V4L API to access a camcorder from a V4L program
+
+libv4l-0/stable,now 1.22.1-5+b2 amd64 [installed,automatic]
+  Collection of video4linux support libraries
+
+libv4l2rds0/stable,now 1.22.1-5+b2 amd64 [installed,automatic]
+  Video4Linux Radio Data System (RDS) decoding library
+
+libv4lconvert0/stable,now 1.22.1-5+b2 amd64 [installed,automatic]
+  Video4linux frame format conversion library
+
+qv4l2/stable,now 1.22.1-5+b2 amd64 [installed]
+  Test bench application for video4linux devices
+
+v4l-conf/stable,now 3.107-1.1 amd64 [installed]
+  tool to configure video4linux drivers
+
+v4l-utils/stable,now 1.22.1-5+b2 amd64 [installed]
+  Collection of command line video4linux utilities
+```
+
 ## *Final Check*
 Beware your user!
 
