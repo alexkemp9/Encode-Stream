@@ -114,7 +114,7 @@ What follows gives us the following information:
 | Width x Height | 640 x 480 |
 | fps | 30.000 (30/1) |
 
-At this moment (15 Sep 2023) the stream-encode script works fine with 25fps PAL imput. `ffmpeg` *should* be able to take NTSC imput at 30fps & render it OK. I would like to work with someone to check the script for NTSC. However, this device is currently unable to produce a viable stream within `qv4l2`, so that is not possible.
+At this moment (15 Sep 2023) the stream-encode script works fine with 25fps PAL imput. `ffmpeg` *should* be able to take NTSC imput at 30fps & render it OK. I would like to work with someone to check the script for NTSC. However, the user is currently unable to produce a viable stream within `qv4l2`, so that is not possible.
 
 Launch the following within a terminal to obtain the info as above:–
 ```
