@@ -38,7 +38,7 @@ Note:
 ## *Overview*
 Use the QT V4L2 test Utility (available from `menu:Multimedia | QT V4L2 test Utility`) whilst a stream is in action. The idea is that if you can see/hear the stream in that window, then `encode_stream` will also work fine. The only items that you need to know (or to change in the window) are `VIDEO_DEVICE`, `AUDIO_DEVICE` + `REGION`. For myself, the default in the qv4l2 window was *NTSC*, whilst the video I was playing was encoded under *PAL*. The window was black & silent until I changed the Region to *PAL* & then it played fine, as did the script.
 
-The following will help discover the audio device (below is output from a problematic MacroSilicon MS210x Capture device; the device is card 2, device #0, which means that the hardware is 'hw:2,0'):–
+The following will help discover the audio device (below is output from a problematic MacroSilicon MS210x Capture device; the device is card 2, device 0, which means that the hardware is 'hw:2,0'):–
 ```
 $ arecord -l
 **** List of CAPTURE Hardware Devices ****
