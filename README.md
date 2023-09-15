@@ -2,7 +2,7 @@
 A BASH Script to encode VHS / Camera / Cassette Streams
 
 ## *Basics*
-This script file is designed for use by any-user (no root access required) within a Terminal. It’s principal purpose is to make it easy & reliable to encode a stream from a VHS, Camera or Cassette player to a video file. It has been used extensively by myself to transfer all my VHS tapes (using a EasyCAP UTV007 USB converter - example below) & cassettes (using a USB-powered cassette player) to disc under *Devuan* (a systemD-free version of *Debian*). In addition to BASH, the main utility required is FFMPEG. Note that zero efforts are made to test for the presence of FFMPEG before use.
+This script file is designed for use by any-user (no root access required) within a Terminal. It’s principal purpose is to make it easy & reliable to encode a stream from a VHS, Camera or Cassette player to disk. It has been used extensively by myself to transfer all my VHS tapes as MP4 (using a EasyCAP UTV007 USB converter - example below) & cassettes as MP3 (using a USB-powered cassette player) to disc under *Devuan* (a systemD-free version of *Debian*). In addition to BASH, the main utility required is FFMPEG. Note that zero efforts are made to test for the presence of FFMPEG before use.
 ![EasyCAP UTV007 USB](Images/easycap.png)
 
 ## *Begin*
