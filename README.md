@@ -90,7 +90,7 @@ v4l-utils/stable,now 1.22.1-5+b2 amd64 [installed]
 This may be the hardest part.    
 I chose *EasyCAP UTV007* because others had reported that it was recognised by Linux & did the job (which it did). If you have any problems at this stage I cannot help, but *can* report on what happens in the background.
 
-Plugging the *EasyCAP* USB2 lead into the desktop computer auto-creates video + audio devices via the interaction of V4L with the kernel:–
+Plugging your USB2 capture device into your desktop computer *should* auto-create video + audio devices via the interaction of V4L with the kernel:–
 ```
 $ ls -l /dev/video*
 crw-rw----+ 1 root video 81, 0 Sep 12 08:34 /dev/video0
@@ -102,7 +102,20 @@ $ id
 uid=1000(alexk) gid=1000(alexk) groups=1000(alexk),24(cdrom),25(floppy),27(sudo),29(audio),30(dip),
 44(video),46(plugdev),102(netdev),109(lpadmin),111(scanner)
 ```
-If things are going south fast, or you simply are curious, make use of V4L (what follows is the output from a problematic MacroSilicon MS210x Capture device; sorry for the length):–
+If things are going south fast, or you simply are curious, make use of V4L    
+(what follows is output from a [problematic MacroSilicon MS210x Capture device](https://dev1galaxy.org/viewtopic.php?id=5981); sorry for the length)
+
+What follows gives us the following information:
+
+| *Type* | *Value* |
+|---:|---|
+| Model | AV TO USB2.0 |
+| Width x Height | 640 x 480 |
+| fps | 30.000 (30/1) |
+
+At this moment (15 Sep 2023) the stream-encode script works fine with 25fps PAL imput. `ffmpeg` *should* be able to take NTSC imput at 30fps & render it OK. I would like to work with someone to check the script for NTSC. However, this device is currently unable to produce a viable stream within `qv4l2`, so that is not possible.
+
+Launch the following within a terminal to obtain the info as above:–
 ```
 $ v4l2-ctl --all
 Driver Info:
